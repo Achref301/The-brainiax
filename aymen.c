@@ -6,6 +6,7 @@
 
 
 enum{TYPE,IDENTIFIANT,MARQUE,DATE,VALEUR,COLUMNS};
+enum{TYPE1,IDENTIFIANT1,MARQUE1,VALEUR1,COLUMNS1};
 //------------------------------------------------------********---------------------------------------------------
 void affichage(GtkWidget* AZtreeview)
 {
@@ -151,91 +152,140 @@ g_object_unref (store);
 
 //...................................................................................................................................
 
-/*void nombre(int *b,int *v)
-{
-FILE *f;
-ANIMAL a;
-f = fopen("animaux.bin", "rb");
-while (fread(&a,sizeof(a),1,f))
-if(strcmp(a.type,"Brebi")==0)
-*b+=1;
-else
-if(strcmp(a.type,"Veau")==0)
-*v+=1;
 
-fclose(f);
-
-
-}*/ 
 //....................................................................................
-void nombre(int *t,int *h, CAPTEURS c)
+int nombret(CAPTEURS c)
 {
-
-float max2=300 ,  min2=10,  max1=45, min1=0;
-//float v=(float)(*c.valeur);
+int t=0;
+float max1=45, min1=0;
 FILE *f;
-CAPTEURS c
 f = fopen("capteurs.bin", "rb");
-while (fread(&c,sizeof(c),1,f))
-if((strcmp(c.type,"température")==0)&&((atoi(valeur)>=min1) || (atoi(valeur)<=max1)))
-*t+=1;
-else
-if((strcmp(c.type,"humidité")==0)&&(atoi(valeur)<=min2 || atoi(valeur)>=max2))
-*h+=1;
-
-fclose(f);
+while (fread(&c,sizeof(c),1,f)){
+if   ((strcmp(c.type,"temperature")==0)&&((atoi(c.valeur)<min1) || (atoi(c.valeur)>max1)))
+t=t+1;
 
 
+}fclose(f);
+
+return t;
 } 
 //....................................................................................
-
-/*void
-on_button12_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
+int nombreh(CAPTEURS c)
 {
-// capteur temperature
-float max2=100 , min2=1,max1=300 , min1=10;
-int id ,n=1 ,i, j , a,mo,nt,ct [50];
-float val;
-char texte [200]="";
-GtkWidget *output;
-FILE *f; 
-f= fopen ("temperature.txt","r");
-if (f!=NULL) {
-while(fscanf (f,"%d %d %d %d %f",&id,&j,&mo ,&a, &val)!=EOF){
-	if ((val<max1 && val>min1)||(val<max2 && val>min2)) {
-		i =0;
-while ((i <n) && (ct[i]!=id ))
-i++;
-if (i==n) {ct[i]=id ; n++ ;}} }
-sprintf (texte,"il y a : %d capteurs de temperature alarmentes ",n);
-output=lookup_widget(button,("label29"));
-gtk_label_set_text(GTK_LABEL(output),texte);
-fclose (f);
-return (n);}
+int h=0;
+float max2=300 ,  min2=10;
+FILE *f;
+f = fopen("capteurs.bin", "rb");
+while (fread(&c,sizeof(c),1,f)){
+
+if   ((strcmp(c.type,"humidite")==0)&&((atoi(c.valeur)<min2) || (atoi(c.valeur)>max2)))
+h=h+1;
 }
-void
-on_button13_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
-{ // capteur humidite
-float max2=100 , min2=1,max1=300 , min1=10;
-int id ,n=1 ,i, j , a,mo,nh,ch [50];
-float val;
-char texte [200]="";
-GtkWidget *output;
-FILE *f; 
-f= fopen ("humidite.txt","r");
-if (f!=NULL) {
-while(fscanf (f,"%d %d %d %d %f",&id,&j,&mo ,&a, &val)!=EOF){
-		if ((val<max1 && val>min1)||(val<max2 && val>min2)) {
-		i =0;
-while ((i <n) && (ch[i]!=id ))
-i++;
-if (i==n) {ch[i]=id ; n++ ;}} }
-sprintf (texte,"il y a : %d capteurs de humidité alarmentes ",n);
-output=lookup_widget(button,("label30"));
-gtk_label_set_text(GTK_LABEL(output),texte);
-fclose (f);
-return (n);}
-}*/
+fclose(f);
+
+return h;
+} 
+//....................................................................................
+/*char marque(CAPTEURS c)
+{
+char marq[30];
+int k,i,j=0,n=0,s=0;
+
+float max=300 ,  min=10;
+
+FILE *f;
+f=fopen("capteurs.bin","rb");
+while(fread(&c,sizeof(c),1,f)!=0){
+	n++;}
+fclose(f);
+//--------------------
+int t[n];
+ m[n];
+m[0]="";
+f = fopen("capteurs.bin", "rb");
+while (fread(&c,sizeof(c),1,f)){
+	if(j<n){
+                 strcpy(m[j],c.valeur);
+	         if(atoi(c.valeur)<min || atoi(c.valeur)>max)
+		 {t[j]=1;}
+	         else {t[j]=0;}
+                 j++;
+			}}	
+fclose(f); 
+//suppression des marques dupliquées et somme des capteurs de chaque marque
+
+   for (i=0;i<n;i++) {
+      for (j=i+1;j<n;) {
+         if (strcmp(m[j],m[i])==0) {t[i]=t[i]+t[i+1];
+            for (k=j;k<n;k++) {
+               strcpy(m[k],m[k+1]);
+	       t[k]=t[k+1];
+            }
+            n--;
+         } else
+            j++;
+      }
+   }
+//Determination de la marque
+        strcpy(marq,m[0]);
+	max=t[0];
+    for(i=1;i<n;i++)
+    {
+       if(max<t[i])
+          { max=t[i];
+	   strcpy(marque,m[i]);;}
+    }
+	return marq;
+
+*/	
+//....................................................................................
+
+
+void affichagestat(GtkWidget* stattreeview)
+{
+float max1=45, min1=0,max2=300 ,  min2=10;
+GtkCellRenderer *renderer;
+GtkTreeViewColumn *column;
+GtkTreeIter iter;
+GtkListStore *store;
+CAPTEURS c;char Date[100];
+store=NULL;
+FILE *f;
+store=gtk_tree_view_get_model(stattreeview);
+if (store==NULL)
+{
+renderer = gtk_cell_renderer_text_new ();
+column = gtk_tree_view_column_new_with_attributes("Type", renderer, "text",TYPE1, NULL);
+gtk_tree_view_append_column (GTK_TREE_VIEW (stattreeview), column);
+
+
+renderer = gtk_cell_renderer_text_new ();
+column = gtk_tree_view_column_new_with_attributes("Identifiant", renderer, "text",IDENTIFIANT1, NULL);
+gtk_tree_view_append_column (GTK_TREE_VIEW (stattreeview), column);
+
+renderer = gtk_cell_renderer_text_new ();
+column = gtk_tree_view_column_new_with_attributes("Marque", renderer, "text",MARQUE1, NULL);
+gtk_tree_view_append_column (GTK_TREE_VIEW (stattreeview), column);
+
+renderer=gtk_cell_renderer_text_new();
+   column= gtk_tree_view_column_new_with_attributes("Valeur",renderer, "text",VALEUR1,NULL);
+   gtk_tree_view_append_column(GTK_TREE_VIEW(stattreeview), column);}
+
+store=gtk_list_store_new(COLUMNS1,G_TYPE_STRING,G_TYPE_STRING,G_TYPE_STRING,G_TYPE_STRING);
+f=fopen("capteurs.bin","rb");
+if(f==NULL)
+{return;}
+else
+{f=fopen("capteurs.bin","ab+");
+while(fread(&c,sizeof(CAPTEURS),1,f))
+{
+if( ((strcmp(c.type,"temperature")==0)&&((atoi(c.valeur)<min1) || (atoi(c.valeur)>max1)))||((strcmp(c.type,"humidite")==0)&&((atoi(c.valeur)<min2) || (atoi(c.valeur)>max2))) ){
+gtk_list_store_append(store,&iter);
+gtk_list_store_set(store,&iter,TYPE1,c.type,IDENTIFIANT1,c.identifiant,MARQUE1,c.marque,VALEUR1,c.valeur,-1);
+}
+}
+fclose(f);
+gtk_tree_view_set_model(GTK_TREE_VIEW(stattreeview),GTK_TREE_MODEL (store));
+g_object_unref(store);}}
+
 
